@@ -292,6 +292,7 @@
     "@types/mocha": "^10.0.6",
     "@types/node": "18.x",
     "@types/sql.js": "^1.4.9",
+    "@types/sqlite3": "^3.1.11",
     "@types/vscode": "^1.85.0",
     "@typescript-eslint/eslint-plugin": "^6.15.0",
     "@typescript-eslint/parser": "^6.15.0",
@@ -305,7 +306,8 @@
     "jsonwebtoken": "^9.0.2",
     "marked": "^15.0.6",
     "semver": "^7.5.4",
-    "sql.js": "^1.12.0"
+    "sql.js": "^1.12.0",
+    "sqlite3": "^5.1.6"
   },
   "extensionKind": ["ui"]
 }

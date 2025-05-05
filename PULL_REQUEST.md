@@ -2,31 +2,31 @@
 
 ## Problem Description
 
-La extensión Cursor Stats muestra el error "No token found" en bases de datos grandes (>2GB) porque utiliza `sql.js`, que carga todo el archivo en memoria a través de `fs.readFileSync()`. En macOS, especialmente en máquinas con Apple Silicon, el archivo `state.vscdb` puede superar fácilmente los 2GB (en nuestro caso alcanzaba 2.77GB), lo que provoca un error `ERR_FS_FILE_TOO_LARGE` cuando se intenta cargar el archivo completo en memoria.
+The Cursor Stats extension shows a "No token found" error with large databases (>2GB) because it uses `sql.js`, which loads the entire file into memory through `fs.readFileSync()`. On macOS, especially on Apple Silicon machines, the `state.vscdb` file can easily exceed 2GB (in our case it reached 2.77GB), causing an `ERR_FS_FILE_TOO_LARGE` error when trying to load the entire file into memory.
 
 ## Solution
 
-Esta PR reemplaza el uso de `sql.js` con `sqlite3`, que puede manejar archivos de base de datos grandes sin cargarlos completamente en memoria. La implementación:
+This PR replaces the use of `sql.js` with `sqlite3`, which can handle large database files without loading them completely into memory. The implementation:
 
-1. Utiliza `sqlite3` como biblioteca principal para acceder a la base de datos
-2. Mantiene `sql.js` como fallback solo para archivos pequeños (menores a 1.5GB)
-3. Importa las dependencias dinámicamente para evitar problemas de compilación
-4. Agrega más información de registro sobre el tamaño del archivo de base de datos
-5. Mejora el manejo de errores y la retroalimentación en caso de problemas
+1. Uses `sqlite3` as the primary library to access the database
+2. Keeps `sql.js` as a fallback only for small files (less than 1.5GB)
+3. Imports dependencies dynamically to avoid compilation problems
+4. Adds more logging information about the database file size
+5. Improves error handling and feedback in case of problems
 
 ## Testing
 
-Esta solución ha sido probada en:
-- macOS con bases de datos de más de 2.5GB
-- Confirma que puede acceder correctamente al token de autenticación
+This solution has been tested on:
+- macOS with databases larger than 2.5GB
+- Confirms that it can correctly access the authentication token
 
-## Cambios
+## Changes
 
-- Agregado `sqlite3` como dependencia
-- Modificado `src/services/database.ts` para usar sqlite3 en lugar de sql.js
-- Mantenido compatibilidad hacia atrás con la lógica de sql.js existente
-- Agregada verificación del tamaño del archivo para optimizar la estrategia de acceso a la base de datos
+- Added `sqlite3` as a dependency
+- Modified `src/services/database.ts` to use sqlite3 instead of sql.js
+- Maintained backward compatibility with existing sql.js logic
+- Added file size verification to optimize database access strategy
 
-## Nota
+## Note
 
-Este cambio resuelve el problema manteniendo la funcionalidad existente y no debería afectar negativamente a los usuarios que no experimentan el problema. 
+This change resolves the issue while maintaining existing functionality and should not negatively affect users who don't experience the problem. 
